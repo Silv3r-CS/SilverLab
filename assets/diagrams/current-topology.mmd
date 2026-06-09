@@ -1,0 +1,10 @@
+flowchart TD
+    A[Home Router / Main Internet] --> B[Technicolor TG582n]
+    B --> C[SilverLab Wi-Fi / Lab Network]
+    C --> D[USB-to-LAN Adapter: nic1]
+    D --> E[Proxmox Host: Laptop 2]
+    E --> F[vmbr0 Bridge]
+    F --> G[Future VM: ubuntu-admin-01]
+    F --> H[Future VM: windows-dc-01]
+    F --> I[Future VM: kali-lab-01]
+    J[Laptop 1 Admin Workstation] --> C
