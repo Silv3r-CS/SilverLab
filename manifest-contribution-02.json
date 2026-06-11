@@ -1,0 +1,18 @@
+{
+  "project": "SilverLab Homelab",
+  "contribution": "Contribution 02 - Router migration, Tailscale recovery, and Ubuntu Server baseline",
+  "previous_commit_message": "Initial SilverLab homelab documentation",
+  "recommended_commit_message": "Document contribution 02 router migration and Ubuntu baseline",
+  "files_to_add_or_update": [
+    "README.md",
+    "docs/03-ubuntu-server-baseline.md",
+    "docs/04-archer-c6-router-migration.md",
+    "assets/diagrams/current-topology.mmd",
+    "assets/screenshots/README.md"
+  ],
+  "notes": [
+    "This package is designed to continue the existing first contribution structure.",
+    "It keeps the docs numbering style already used in the repository.",
+    "It updates the old Technicolor/192.168.0.x status to the new Archer C6/192.168.1.x status."
+  ]
+}
