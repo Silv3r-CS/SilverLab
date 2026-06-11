@@ -1,0 +1,52 @@
+{
+  "project": "SilverLab",
+  "contribution": "Contribution 02 screenshots",
+  "recommended_commit_message": "Add contribution 02 screenshots",
+  "target_structure": "assets/screenshots/",
+  "screenshots": [
+    {
+      "file": "assets/screenshots/archer-c6-setup-success-wan-warning.png",
+      "privacy": "safe"
+    },
+    {
+      "file": "assets/screenshots/archer-c6-dynamic-ip-default-mac-redacted.png",
+      "privacy": "redacted"
+    },
+    {
+      "file": "assets/screenshots/laptop1-wifi-link-speed-866mbps.png",
+      "privacy": "safe"
+    },
+    {
+      "file": "assets/screenshots/proxmox-login-over-tailscale-redacted.png",
+      "privacy": "cropped/redacted"
+    },
+    {
+      "file": "assets/screenshots/tailscale-status-proxmox-active-redacted.png",
+      "privacy": "redacted"
+    },
+    {
+      "file": "assets/screenshots/ubuntu-server-ssh-access-from-laptop1.png",
+      "privacy": "local lab info only"
+    },
+    {
+      "file": "assets/screenshots/ubuntu-server-baseline-checks.png",
+      "privacy": "local lab info only"
+    },
+    {
+      "file": "assets/screenshots/ubuntu-qemu-guest-agent-active.png",
+      "privacy": "local lab info only"
+    },
+    {
+      "file": "assets/screenshots/ubuntu-reserved-ip-192-168-1-120.png",
+      "privacy": "local lab info only"
+    },
+    {
+      "file": "assets/screenshots/kali-proxmox-tailscale-troubleshooting-redacted.png",
+      "privacy": "redacted"
+    },
+    {
+      "file": "assets/screenshots/tcpdump-tailscale-traffic-redacted.png",
+      "privacy": "redacted"
+    }
+  ]
+}
