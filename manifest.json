@@ -1,14 +1,29 @@
 {
-  "project": "SilverLab Homelab",
-  "contribution": "Initial GitHub contribution",
-  "recommended_repo": "silverlab-homelab",
-  "commit_message": "Initial SilverLab homelab documentation",
-  "files": [
-    "README.md",
-    ".gitignore",
-    "docs/01-initial-lab-build.md",
-    "docs/02-troubleshooting-usb-lan-fix.md",
-    "docs/IMPLEMENTATION_GUIDE.md",
-    "assets/diagrams/current-topology.mmd"
-  ]
+  "package": "SilverLab Documentation Baseline Rebuild",
+  "created": "2026-06-12",
+  "purpose": "Replace visible GitHub documentation with a clean, employer-friendly baseline structure while preserving project history.",
+  "recommended_commit_message": "Rebuild SilverLab documentation baseline",
+  "included_sections": [
+    "README front page",
+    "project roadmap",
+    "hardware inventory",
+    "network topology",
+    "Proxmox installation and networking",
+    "Laptop 2 RJ45 fault finding",
+    "router replacement and subnet migration",
+    "Ubuntu Server baseline",
+    "Tailscale secure remote access model",
+    "command reference",
+    "next implementation plan",
+    "incident-style tickets",
+    "redacted screenshots",
+    "redacted configs"
+  ],
+  "security_notes": [
+    "No passwords, private keys, API tokens, or router credentials are intentionally included.",
+    "Tailscale user/tailnet details and private Tailscale addresses are not documented.",
+    "MAC addresses are redacted or avoided.",
+    "Private lab IP addresses are retained where useful for documentation."
+  ],
+  "next_technical_milestone": "Ubuntu Nginx internal web service + UFW firewall baseline"
 }

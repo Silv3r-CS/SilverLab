@@ -1,0 +1,19 @@
+# Redacted Proxmox network interface baseline
+# Purpose: show the structure of the Proxmox bridge without exposing unnecessary hardware identifiers.
+
+auto lo
+iface lo inet loopback
+
+iface <working-usb-lan-adapter> inet manual
+
+auto vmbr0
+iface vmbr0 inet static
+        address 192.168.1.200/24
+        gateway 192.168.1.1
+        bridge-ports <working-usb-lan-adapter>
+        bridge-stp off
+        bridge-fd 0
+
+iface <unused-built-in-lan> inet manual
+
+source /etc/network/interfaces.d/*
