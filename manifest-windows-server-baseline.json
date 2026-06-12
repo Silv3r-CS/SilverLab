@@ -1,0 +1,40 @@
+{
+  "package": "SilverLab_Windows_Server_Baseline_Update",
+  "purpose": "GitHub update for Windows Server VM baseline milestone and refreshed screenshot evidence.",
+  "created_files": [
+    "README.md",
+    "docs/09-next-implementation-plan.md",
+    "docs/11-windows-server-baseline.md",
+    "docs/tickets/005-windows-server-virtio-driver-disk-detection.md",
+    "assets/screenshots/README.md"
+  ],
+  "screenshots": [
+    "01-router-dhcp-pool-and-ubuntu-reservation-redacted.png",
+    "02-ubuntu-reserved-ip-validation.png",
+    "03-ubuntu-migration-validation-current-network.png",
+    "04-proxmox-migration-validation-shell.png",
+    "05-proxmox-linux-bridge-vmbr0-gui.png",
+    "06-proxmox-network-interfaces-redacted.png",
+    "07-proxmox-node-summary-redacted.png",
+    "08-proxmox-storage-summary-redacted.png",
+    "09-ubuntu-vm-hardware-options-redacted.png",
+    "10-ubuntu-qemu-guest-agent-active.png",
+    "11-ubuntu-server-initial-baseline-checks.png",
+    "12-ubuntu-ssh-access-from-laptop1-redacted.png",
+    "13-tailscale-access-controls-redacted.png",
+    "15-nginx-installed-service-active.png",
+    "16-silverlab-nginx-webpage-working.png",
+    "17-nginx-custom-page-validation.png",
+    "18-ufw-firewall-rules-ssh-http.png",
+    "19-windows-server-vm-creation-summary-redacted.png",
+    "20-windows-server-rdp-access-from-laptop1.png",
+    "21-windows-server-hostname-network-baseline.png"
+  ],
+  "recommended_commit_message": "Document Windows Server VM baseline",
+  "notes": [
+    "Package contains all current screenshot evidence so existing PNG screenshots can be replaced cleanly.",
+    "Screenshot 19 has the VM MAC address redacted.",
+    "Screenshot 20 was cropped to focus on the RDP session and avoid browser/account details.",
+    "No snapshot screenshot is included because the user chose to omit it; a snapshot before AD DS is still recommended."
+  ]
+}

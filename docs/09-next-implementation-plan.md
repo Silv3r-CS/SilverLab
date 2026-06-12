@@ -1,161 +1,35 @@
 # Next Implementation Plan
 
-This plan is focused on closing practical skill gaps for entry-level IT support, service desk, junior infrastructure, and future cyber/SOC roles.
+## Immediate Priority: Active Directory Domain Services Baseline
 
-## Priority 1 - Ubuntu Nginx internal web service
+The next SilverLab milestone is to configure `SILVER-DC01` as the first Windows Domain Controller.
 
-Build a simple internal web page on the Ubuntu Server VM.
+## Why this is next
 
-Planned result:
+Active Directory, DNS, users, groups, permissions, and Windows Server administration appear frequently in entry-level IT Support, Service Desk, Desktop Support, and Junior Infrastructure job adverts. Completing this milestone will make SilverLab more directly relevant for job applications.
 
-```text
-http://192.168.1.120
-```
+## Planned Steps
 
-The page should show:
+1. Give `SILVER-DC01` a stable IP address or DHCP reservation.
+2. Install the Active Directory Domain Services role.
+3. Promote the server to a Domain Controller.
+4. Create the initial lab domain.
+5. Configure and validate DNS.
+6. Create OUs for users, admins, servers, and workstations.
+7. Create test users and administrative accounts.
+8. Document the setup with screenshots and command notes.
+9. Validate the Windows Server/Ubuntu mixed environment.
+10. Take a snapshot after the clean AD baseline is working.
 
-- Server role
-- Hostname
-- Services running
-- Lab purpose
-- Date/version of the milestone
+## Later Security Roadmap
 
-Skills demonstrated:
+After Active Directory is complete, the lab will move toward a more security-focused design:
 
-- Linux service installation
-- Web service basics
-- Browser-based validation
-- Service troubleshooting
-- Documentation
-
-## Priority 2 - UFW firewall baseline
-
-Enable and configure UFW on Ubuntu.
-
-Planned rules:
-
-- Allow SSH
-- Allow HTTP
-- Deny unnecessary inbound traffic
-
-Skills demonstrated:
-
-- Host firewalling
-- Least privilege
-- Security basics
-- Service access validation
-
-## Priority 3 - Ticket-style troubleshooting notes
-
-Create incident-style documentation for real lab issues.
-
-Topics:
-
-- RJ45/network adapter fault
-- Router replacement
-- Subnet migration
-- DHCP reservation
-- QEMU Guest Agent validation
-
-Skills demonstrated:
-
-- Service desk process
-- Incident documentation
-- Root-cause analysis
-- Clear communication
-
-## Priority 4 - Windows Server VM baseline
-
-Create a Windows Server VM carefully due to the 8 GB RAM limit on Laptop 2.
-
-Initial target:
-
-- Install Windows Server
-- Rename server
-- Configure network address/reservation
-- Take Proxmox snapshot
-- Document baseline
-
-Skills demonstrated:
-
-- Windows Server installation
-- Virtualization resource planning
-- Server baseline documentation
-
-## Priority 5 - Active Directory basics
-
-After Windows Server is stable, create a simple AD lab.
-
-Initial target:
-
-- Domain Controller
-- Lab domain
-- Users
-- Groups
-- Organisational Units
-- Basic Group Policy concepts
-
-Skills demonstrated:
-
-- Identity administration
-- Windows infrastructure basics
-- Helpdesk-relevant account management
-
-## Priority 6 - Backup and restore
-
-Use SilverStore for a backup milestone.
-
-Initial target:
-
-- Proxmox VM backup
-- Basic retention approach
-- Restore test
-- Document recovery result
-
-Skills demonstrated:
-
-- Backup operations
-- Disaster recovery
-- Infrastructure reliability
-
-## Priority 7 - Monitoring/SIEM
-
-Add monitoring after core services are stable.
-
-Possible tools:
-
-- Splunk
-- Wazuh
-- Lightweight log forwarding first
-
-Skills demonstrated:
-
-- Log analysis
-- Security monitoring
-- Incident triage
-- SOC pathway
-
-## Priority 8 - Domain and portfolio integration
-
-Use `createsomethingnice.com` later for public portfolio value.
-
-Recommended safe use:
-
-- GitHub Pages portfolio
-- Project landing page
-- DNS practice
-- HTTPS/TLS
-
-Do not expose Proxmox publicly.
-
-## Priority 9 - OPNsense and segmentation
-
-Wait until a second USB-to-LAN adapter is available.
-
-Skills demonstrated later:
-
-- Firewalling
-- Routing
-- Segmentation
-- Lab zones
-- Network security
+1. Cross-platform validation between Windows Server, Ubuntu Server, and clients.
+2. Windows client VM and domain join.
+3. Group Policy basics.
+4. OPNsense firewall introduction.
+5. Migration of lab VMs behind OPNsense-controlled networks.
+6. Monitoring/logging with Windows and Linux sources.
+7. Backup and restore testing.
+8. Security detection and incident-style documentation.

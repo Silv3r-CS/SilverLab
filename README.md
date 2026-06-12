@@ -1,164 +1,201 @@
-# SilverLab Homelab
+# SilverLab
 
-SilverLab is a practical IT infrastructure and cyber-security learning lab built on repurposed laptop hardware. The project is designed to demonstrate entry-level IT support, junior infrastructure, networking, Linux administration, documentation, troubleshooting, secure remote access, and future cyber/SOC skills.
+SilverLab is a practical IT and cyber security homelab built to develop and demonstrate infrastructure, networking, Linux, Windows Server, security, documentation, and troubleshooting skills.
 
-The lab is intentionally documented like a small professional IT environment: hardware inventory, network topology, change notes, incident-style troubleshooting, command references, configuration evidence, and implementation roadmap.
+The lab is built on repurposed laptop hardware using Proxmox VE, Ubuntu Server, Windows Server, Tailscale, and a dedicated lab router. The long-term goal is to evolve the environment into a segmented security lab with OPNsense, Active Directory, monitoring, backups, and documented incident-style troubleshooting.
 
-## Current lab status
+## Current Status
 
 | Area | Status |
 |---|---|
-| Proxmox VE host | Installed on Laptop 2 and reachable on the lab network |
-| Lab router | Migrated to TP-Link Archer C6 on the `192.168.1.0/24` lab subnet |
-| Proxmox management IP | `192.168.1.200` |
-| Ubuntu Server VM | Built, baselined, reachable over SSH |
-| Ubuntu VM reserved IP | `192.168.1.120` |
-| Secure remote access | Tailscale used for private remote access; no public port forwarding |
-| Documentation state | Rebuilt into a clean baseline structure |
-| Next technical build | Ubuntu Nginx internal web service + UFW firewall baseline |
+| Proxmox VE host | Built and operational on Laptop 2 |
+| Lab router | TP-Link Archer C6 configured on `192.168.1.0/24` |
+| Ubuntu Server VM | Built, baselined, reachable by SSH |
+| Ubuntu Nginx service | Custom internal web page deployed |
+| Ubuntu firewall | UFW enabled with SSH and HTTP allowed |
+| Tailscale | Secure remote access evidence documented |
+| Windows Server VM | Installed, renamed, network validated, RDP working |
+| Active Directory | Next milestone |
+| OPNsense segmentation | Planned later milestone |
+| Monitoring/SIEM | Planned later milestone |
+| Backup/restore testing | Planned later milestone |
 
-## High-level architecture
+## Hardware Overview
 
-```text
-Internet / Upstream home network
-        |
-        | WAN uplink
-        v
-TP-Link Archer C6 lab router
-Gateway: 192.168.1.1
-DHCP pool: 192.168.1.100-192.168.1.199
-        |
-        | LAN
-        v
-Laptop 2 - Proxmox VE host
-Management: 192.168.1.200
-Bridge: vmbr0 through working USB-to-LAN adapter
-        |
-        +-- Ubuntu Server VM: 192.168.1.120
-        +-- Future Windows Server VM
-        +-- Future monitoring/SIEM services
-
-Laptop 1 - Admin workstation
-Used for browser access, SSH, GitHub documentation, screenshots, and lab administration.
-```
-
-See the full topology document in [`docs/02-network-topology.md`](docs/02-network-topology.md).
-
-## Skills demonstrated so far
-
-- Proxmox VE installation and basic host administration
-- Network adapter fault finding and workaround using USB-to-LAN
-- Linux network validation using command-line tools
-- Static management IP planning for Proxmox
-- DHCP pool planning and DHCP reservation for the Ubuntu VM
-- Router replacement and subnet migration
-- Ubuntu Server VM deployment and baseline checks
-- SSH validation from an admin workstation
-- QEMU Guest Agent installation and validation
-- Tailscale secure remote access model without public port forwarding
-- Markdown documentation, GitHub project structure, visual evidence handling, and privacy-aware redaction
-
-## Documentation index
-
-| Document | Purpose |
+| Device | Role |
 |---|---|
-| [`docs/00-project-roadmap.md`](docs/00-project-roadmap.md) | Current and planned implementation roadmap |
-| [`docs/01-hardware-inventory.md`](docs/01-hardware-inventory.md) | Devices, roles, and hardware details used in the lab |
-| [`docs/02-network-topology.md`](docs/02-network-topology.md) | Current physical and logical network design |
-| [`docs/03-proxmox-installation-and-networking.md`](docs/03-proxmox-installation-and-networking.md) | Proxmox deployment and management networking |
-| [`docs/04-fault-finding-laptop2-rj45.md`](docs/04-fault-finding-laptop2-rj45.md) | Defective RJ45 fault finding and workaround |
-| [`docs/05-router-replacement-and-subnet-migration.md`](docs/05-router-replacement-and-subnet-migration.md) | Router replacement and migration from old subnet to new subnet |
-| [`docs/06-ubuntu-server-baseline.md`](docs/06-ubuntu-server-baseline.md) | Ubuntu VM deployment, SSH validation, guest agent, baseline tools |
-| [`docs/07-secure-remote-access-tailscale.md`](docs/07-secure-remote-access-tailscale.md) | Secure remote access design using Tailscale |
-| [`docs/08-command-reference.md`](docs/08-command-reference.md) | Bash/Linux/Proxmox command reference with explanations |
-| [`docs/09-next-implementation-plan.md`](docs/09-next-implementation-plan.md) | Updated plan focused on job-market skill gaps |
-| [`docs/tickets/`](docs/tickets) | Incident-style troubleshooting notes |
+| Laptop 1 | Admin workstation for Proxmox access, SSH, RDP, GitHub documentation, screenshots, and future client/security workloads |
+| Laptop 2 | Proxmox VE host with 8 GiB RAM |
+| TP-Link Archer C6 | Dedicated lab router and DHCP gateway |
+| USB-to-LAN adapter | Working network interface for Proxmox bridge after built-in RJ45 issues |
+| External SilverStore drive | Future backup, ISO/archive, and restore-testing storage |
 
-## Evidence approach
+## Current Network Overview
 
-Screenshots are used only where they prove functionality. Historical screenshots are not recreated if they were missed. Instead, current-state screenshots are used to demonstrate that the lab is working.
+| Component | Address / Role |
+|---|---|
+| Lab gateway | `192.168.1.1` |
+| DHCP pool | `192.168.1.100 - 192.168.1.199` |
+| Proxmox host | `192.168.1.200` |
+| Ubuntu Server | `192.168.1.120` |
+| Windows Server | `192.168.1.154` |
+| Proxmox bridge | `vmbr0` using the working USB-to-LAN adapter |
 
-Current selected visual evidence is stored in [`assets/screenshots/`](assets/screenshots/). Sensitive information such as passwords, keys, tokens, public IPs, personal details, MAC addresses where appropriate, and Tailscale user/tailnet details has been excluded or redacted.
+Private lab IP addresses are documented because they describe the internal lab design. Public IPs, passwords, tokens, private keys, MAC addresses, and personal details are excluded or redacted.
 
-## Security approach
+## Implemented Milestones
 
-- Proxmox is not exposed directly to the public internet.
-- Remote access is handled through Tailscale.
-- Public domain usage is planned only for safe portfolio/demo purposes later.
-- No passwords, private keys, secrets, tokens, or personal identifiers are intentionally documented.
+### 1. Proxmox and Network Foundation
 
-## Next milestone
+- Installed Proxmox VE on Laptop 2
+- Identified and worked around the defective built-in RJ45 path
+- Configured Proxmox networking through the working USB-to-LAN adapter
+- Documented `vmbr0`, storage layout, and baseline host configuration
 
-The next planned technical contribution is:
+Documentation:
+
+- [Network Topology](docs/02-network-topology.md)
+- [Proxmox Installation and Networking](docs/03-proxmox-installation-and-networking.md)
+- [Fault Finding: Laptop 2 RJ45](docs/04-fault-finding-laptop2-rj45.md)
+
+### 2. Router Replacement and Subnet Migration
+
+- Replaced the earlier router setup with a TP-Link Archer C6
+- Migrated the lab from the old `192.168.0.x` range to `192.168.1.x`
+- Restored Proxmox access after the subnet change
+- Confirmed Ubuntu and Proxmox connectivity to the new gateway
+
+Documentation:
+
+- [Router Replacement and Subnet Migration](docs/05-router-replacement-and-subnet-migration.md)
+
+### 3. Ubuntu Server Baseline
+
+- Built an Ubuntu Server VM
+- Configured SSH access
+- Installed baseline admin tools
+- Validated network settings, storage, memory, uptime, and QEMU Guest Agent
+
+Documentation:
+
+- [Ubuntu Server Baseline](docs/06-ubuntu-server-baseline.md)
+
+### 4. Secure Remote Access
+
+- Used Tailscale for secure remote access
+- Avoided public Proxmox exposure and public port forwarding
+- Documented remote-access security rationale
+
+Documentation:
+
+- [Secure Remote Access with Tailscale](docs/07-secure-remote-access-tailscale.md)
+
+### 5. Ubuntu Nginx and UFW Baseline
+
+- Installed Nginx on Ubuntu Server
+- Created a custom internal SilverLab web page
+- Configured UFW with SSH and HTTP allowed
+- Validated Nginx service status, web access, and firewall rules
+
+Documentation:
+
+- [Ubuntu Nginx and UFW Baseline](docs/10-ubuntu-nginx-ufw-baseline.md)
+
+### 6. Windows Server VM Baseline
+
+- Created a Windows Server VM in Proxmox
+- Corrected the VM guest OS type to Microsoft Windows after identifying the first installation issue
+- Loaded the VirtIO SCSI storage driver during Windows Setup so the 60 GiB disk became visible
+- Installed Windows Server 2025 Standard Evaluation with Desktop Experience
+- Enabled Remote Desktop
+- Renamed the server to `SILVER-DC01`
+- Validated hostname, IP configuration, gateway, and network connectivity
+
+Documentation:
+
+- [Windows Server VM Baseline](docs/11-windows-server-baseline.md)
+
+## Screenshot Evidence
+
+Curated redacted screenshots are stored in:
 
 ```text
-Ubuntu Nginx internal web service + UFW firewall baseline
+assets/screenshots/
 ```
 
-This will add a simple internal service to the Ubuntu VM, demonstrate Linux service deployment, firewall configuration, and web access validation from Laptop 1.
+Screenshot index:
 
----
+- [Screenshot Evidence README](assets/screenshots/README.md)
 
-## Latest Milestone: Ubuntu Nginx and UFW Baseline
+## Troubleshooting Tickets
 
-The Ubuntu Server VM now hosts a custom internal Nginx web page and is protected with UFW firewall rules.
+Troubleshooting notes are documented in a ticket-style format to show issue analysis, root cause, resolution, and verification.
 
-### What was implemented
+| Ticket | Topic |
+|---|---|
+| [001](docs/tickets/001-laptop2-rj45-fault.md) | Laptop 2 RJ45 / network fault |
+| [002](docs/tickets/002-router-replacement.md) | Router replacement |
+| [003](docs/tickets/003-proxmox-unreachable-after-subnet-change.md) | Proxmox unreachable after subnet change |
+| [004](docs/tickets/004-ubuntu-dhcp-reservation.md) | Ubuntu DHCP reservation |
+| [005](docs/tickets/005-windows-server-virtio-driver-disk-detection.md) | Windows Server VirtIO disk driver during installation |
 
-- Installed and validated Nginx on the Ubuntu Server VM
-- Created a custom internal SilverLab web page
-- Configured a dedicated Nginx site for `/var/www/silverlab`
-- Tested the Nginx configuration with `nginx -t`
-- Enabled UFW firewall
-- Allowed only required inbound services:
-  - SSH / OpenSSH
-  - HTTP / Nginx HTTP
+## Command Reference
 
-### Evidence added
+A project command reference is maintained here:
 
-Screenshots were added for:
+- [Command Reference](docs/08-command-reference.md)
 
-- Nginx service running
-- Custom SilverLab web page reachable from Laptop 1
-- Nginx configuration test successful
-- UFW firewall active with SSH and HTTP allowed
+## Latest Milestone
 
-### Documentation
+The latest completed milestone is:
 
-Full write-up:
+```text
+Windows Server VM Baseline
+```
 
-[Ubuntu Nginx and UFW Baseline](docs/10-ubuntu-nginx-ufw-baseline.md)
+This milestone adds a job-relevant Microsoft infrastructure foundation to SilverLab, including Windows Server installation, RDP administration, hostname/network validation, and Proxmox VirtIO driver troubleshooting.
 
+## Next Milestone: Active Directory Domain Services Baseline
 
----
+The next milestone is to promote the Windows Server VM into the first SilverLab Domain Controller.
 
-## Next Milestone: Windows Server and Active Directory Baseline
+Planned implementation:
 
-The next planned SilverLab milestone is to build a Windows Server VM and configure a basic Active Directory lab environment.
+- Assign a stable IP address or DHCP reservation to `SILVER-DC01`
+- Install Active Directory Domain Services
+- Promote `SILVER-DC01` to a Domain Controller
+- Create the initial lab domain
+- Configure DNS as part of the domain controller role
+- Create organisational units for users, admins, servers, and workstations
+- Create test user and admin accounts
+- Validate domain and DNS functionality
+- Document screenshots and configuration steps
 
-### Planned implementation
+## Later Roadmap
 
-- Create a Windows Server VM in Proxmox
-- Assign suitable CPU, RAM, disk, and network settings
-- Connect the VM to the existing `vmbr0` lab network
-- Configure a stable IP address or DHCP reservation
-- Install and configure Active Directory Domain Services
-- Promote the server to a Domain Controller
-- Create a basic lab domain
-- Create organisational units, users, groups, and admin accounts
-- Document the setup with screenshots, commands, and configuration notes
+After Active Directory is stable, the planned direction is:
 
-### Skills this milestone will demonstrate
+1. Cross-platform validation between Windows Server and Ubuntu Server
+2. Windows client VM and domain join
+3. Group Policy basics
+4. OPNsense firewall and lab segmentation
+5. Backups and restore testing
+6. Monitoring/logging with Windows and Linux events
+7. Security/SOC-style workflows
+8. Automation with PowerShell, Bash, and later Ansible
 
-- Windows Server administration
-- Active Directory basics
-- User and group management
-- Identity and access management fundamentals
-- DNS/domain concepts
-- VM resource planning in Proxmox
-- IT support and junior infrastructure readiness
+## Security Principles
 
-### Why this is the next priority
+SilverLab documentation avoids exposing sensitive information. The repo should not contain:
 
-Active Directory, Windows Server, users, groups, permissions, and Microsoft infrastructure basics appear frequently in entry-level IT Support, Service Desk, Desktop Support, and Junior Infrastructure job adverts. This milestone will make SilverLab more directly relevant for job applications.
-
+- Passwords
+- Private keys
+- API tokens
+- Tailscale auth keys
+- Public IP addresses
+- Email addresses
+- Personal addresses
+- MAC addresses unless redacted
+- Serial numbers
+- Router/Wi-Fi passwords
+- Browser tabs containing personal information
