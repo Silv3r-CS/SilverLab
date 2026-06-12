@@ -1,0 +1,19 @@
+flowchart TD
+    Internet[Internet / Upstream Home Network]
+    Router[TP-Link Archer C6 Lab Router\nGateway: 192.168.1.1\nDHCP: 192.168.1.100-199]
+    Laptop1[Laptop 1 - Admin Workstation\n16 GB RAM\nWindows / Kali admin use]
+    Proxmox[Laptop 2 - Proxmox VE Host\n8 GB RAM\nManagement: 192.168.1.200\nvmbr0 via USB-to-LAN]
+    Ubuntu[Ubuntu Server VM\nhomelab-silver\n192.168.1.120\nSSH + QEMU Agent]
+    FutureWin[Future Windows Server VM\nAD / DNS / GPO]
+    FutureMon[Future Monitoring/SIEM\nSplunk or Wazuh]
+    SilverStore[SilverStore External Drive\nFuture backups / restore tests]
+    Tailscale[Tailscale Private Remote Access\nNo public Proxmox port forwarding]
+
+    Internet --> Router
+    Router --> Laptop1
+    Router --> Proxmox
+    Proxmox --> Ubuntu
+    Proxmox --> FutureWin
+    Proxmox --> FutureMon
+    Proxmox -. future backups .-> SilverStore
+    Tailscale -. private access .-> Proxmox

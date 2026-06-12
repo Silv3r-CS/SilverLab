@@ -1,0 +1,12 @@
+# Ubuntu Server baseline packages
+# These packages support administration, troubleshooting, network checks, and Proxmox guest integration.
+
+curl
+wget
+git
+net-tools
+dnsutils
+traceroute
+nmap
+htop
+qemu-guest-agent

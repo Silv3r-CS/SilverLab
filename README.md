@@ -1,191 +1,98 @@
 # SilverLab Homelab
 
-SilverLab is my personal IT homelab project built to develop practical, job-ready skills in virtualization, networking, Linux administration, troubleshooting, documentation, and infrastructure planning.
+SilverLab is a practical IT infrastructure and cyber-security learning lab built on repurposed laptop hardware. The project is designed to demonstrate entry-level IT support, junior infrastructure, networking, Linux administration, documentation, troubleshooting, secure remote access, and future cyber/SOC skills.
 
-The lab uses a repurposed laptop running Proxmox VE as the virtualization host, with a separate admin workstation used for browser access, SSH, documentation, and future lab management tasks.
+The lab is intentionally documented like a small professional IT environment: hardware inventory, network topology, change notes, incident-style troubleshooting, command references, configuration evidence, and implementation roadmap.
 
-This repository documents the build process, design decisions, troubleshooting steps, and future improvements.
+## Current lab status
 
-## Project Goals
-
-The purpose of this homelab is to build hands-on experience that supports a career in IT support, systems administration, networking, and cybersecurity.
-
-Key goals include:
-
-- Build and manage a Proxmox VE virtualization host
-- Create and manage Linux and Windows virtual machines
-- Practice network troubleshooting and documentation
-- Build a small lab network separate from normal home usage
-- Learn Active Directory, DNS, DHCP, monitoring, backups, and security basics
-- Document the project professionally as portfolio evidence
-
-## Current Lab Status
-
-The second infrastructure phase of the lab is complete.
-
-Current progress:
-
-- Proxmox VE installed on Laptop 2
-- Proxmox accessible from Laptop 1 through a browser
-- Built-in LAN adapter on Laptop 2 identified as faulty and left unused
-- USB-to-LAN adapter installed and confirmed working
-- Proxmox bridge `vmbr0` configured to use the USB-to-LAN adapter
-- Original Technicolor router replaced with a TP-Link Archer C6
-- New lab Wi-Fi network created: **SilverHomeLab**
-- Lab network migrated to the `192.168.1.x` subnet
-- Proxmox management IP updated to `192.168.1.200/24`
-- Tailscale secure remote access to Proxmox confirmed
-- First Ubuntu Server VM installed and baselined
-- SSH access to the Ubuntu Server VM confirmed from Laptop 1
-- QEMU Guest Agent installed and validated inside the Ubuntu Server VM
-- Baseline snapshot created after SSH and QEMU Guest Agent validation
-
-## Contribution History
-
-| Contribution | Summary | Documentation |
-|---|---|---|
-| 01 | Initial Proxmox installation, lab network setup, USB-to-LAN adapter fix, and first topology documentation | `docs/01-initial-lab-build.md`, `docs/02-troubleshooting-usb-lan-fix.md` |
-| 02 | TP-Link Archer C6 migration, subnet migration, Tailscale recovery, Ubuntu Server baseline, SSH validation, QEMU Guest Agent validation, and baseline snapshot | `docs/03-ubuntu-server-baseline.md`, `docs/04-archer-c6-router-migration.md` |
-
-## Current Network Topology
-
-```text
-Home Router / Main Internet
-        |
-Mini Switch
-        |
-TP-Link Archer C6
-SilverHomeLab Wi-Fi / Lab Network
-Gateway: 192.168.1.1
-        |
-USB-to-LAN Adapter
-        |
-Laptop 2 - Proxmox VE Host
-IP: 192.168.1.200/24
-        |
-vmbr0 Bridge
-        |
-Ubuntu Server VM
-Future Virtual Machines
-```
-
-A Mermaid version of the current topology is stored in:
-
-```text
-assets/diagrams/current-topology.mmd
-```
-
-## Proxmox Network Configuration
-
-The working Proxmox network configuration uses `vmbr0` as the management and VM bridge.
-
-```text
-auto lo
-iface lo inet loopback
-
-iface nic1 inet manual
-
-auto vmbr0
-iface vmbr0 inet static
-        address 192.168.1.200/24
-        gateway 192.168.1.1
-        bridge-ports nic1
-        bridge-stp off
-        bridge-fd 0
-
-iface nic0 inet manual
-
-iface nic2 inet manual
-
-source /etc/network/interfaces.d/*
-```
-
-## Interface Summary
-
-| Interface | Purpose | Status |
-|---|---|---|
-| `nic0` | Built-in LAN adapter | Faulty / unused |
-| `nic1` | USB-to-LAN adapter | Active |
-| `wlo1` | Built-in Wi-Fi adapter | Not used by Proxmox |
-| `vmbr0` | Proxmox Linux bridge | Active, `192.168.1.200/24` |
-
-## Storage Summary
-
-The Proxmox host has a 256 GB SSD. Linux reports this as approximately 238.5 GiB usable.
-
-Current layout:
-
-| Storage Area | Approximate Size | Purpose |
-|---|---:|---|
-| Proxmox root | 69.5 GiB | Host operating system |
-| local-lvm / data | 141.5 GiB | VM disks |
-| Swap | 7.6 GiB | System swap |
-
-The Proxmox dashboard displays the root filesystem size, not the entire SSD. The remaining storage is available for virtual machine disks through `local-lvm`.
-
-## First Ubuntu Server VM
-
-The first Ubuntu Server VM has been installed and baselined.
-
-| Setting | Value |
+| Area | Status |
 |---|---|
-| VM name | `SilverServer-Ubuntu` |
-| Hostname | `homelab-silver` |
-| CPU | 2 cores |
-| RAM | 2 GiB |
-| Disk | 32 GiB on `local-lvm` |
-| Network | VirtIO adapter on `vmbr0` |
-| SSH | Enabled and tested from Laptop 1 |
-| QEMU Guest Agent | Installed and validated |
-| Snapshot | `ubuntu-baseline-ssh-qemu-agent-working` |
+| Proxmox VE host | Installed on Laptop 2 and reachable on the lab network |
+| Lab router | Migrated to TP-Link Archer C6 on the `192.168.1.0/24` lab subnet |
+| Proxmox management IP | `192.168.1.200` |
+| Ubuntu Server VM | Built, baselined, reachable over SSH |
+| Ubuntu VM reserved IP | `192.168.1.120` |
+| Secure remote access | Tailscale used for private remote access; no public port forwarding |
+| Documentation state | Rebuilt into a clean baseline structure |
+| Next technical build | Ubuntu Nginx internal web service + UFW firewall baseline |
 
-## Secure Remote Access
+## High-level architecture
 
-SilverLab uses Tailscale for secure remote access to Proxmox.
+```text
+Internet / Upstream home network
+        |
+        | WAN uplink
+        v
+TP-Link Archer C6 lab router
+Gateway: 192.168.1.1
+DHCP pool: 192.168.1.100-192.168.1.199
+        |
+        | LAN
+        v
+Laptop 2 - Proxmox VE host
+Management: 192.168.1.200
+Bridge: vmbr0 through working USB-to-LAN adapter
+        |
+        +-- Ubuntu Server VM: 192.168.1.120
+        +-- Future Windows Server VM
+        +-- Future monitoring/SIEM services
 
-This avoids exposing the Proxmox web interface directly to the public internet and removes the need for public port forwarding.
+Laptop 1 - Admin workstation
+Used for browser access, SSH, GitHub documentation, screenshots, and lab administration.
+```
 
-## Skills Demonstrated
+See the full topology document in [`docs/02-network-topology.md`](docs/02-network-topology.md).
 
-This project currently demonstrates:
+## Skills demonstrated so far
 
-- Installing and accessing Proxmox VE
-- Reading Linux network interface output
-- Identifying a faulty network adapter
-- Replacing a failed internal LAN interface with a USB-to-LAN adapter
-- Configuring a Proxmox Linux bridge
-- Assigning and updating a static management IP
-- Replacing and configuring a lab router
-- Migrating a lab subnet
-- Recovering Proxmox access after a gateway/subnet change
-- Validating secure remote access using Tailscale
-- Installing and baselining an Ubuntu Server VM
-- Using SSH for remote Linux administration
-- Installing and validating QEMU Guest Agent
-- Creating a baseline VM snapshot
-- Documenting infrastructure in a professional format
+- Proxmox VE installation and basic host administration
+- Network adapter fault finding and workaround using USB-to-LAN
+- Linux network validation using command-line tools
+- Static management IP planning for Proxmox
+- DHCP pool planning and DHCP reservation for the Ubuntu VM
+- Router replacement and subnet migration
+- Ubuntu Server VM deployment and baseline checks
+- SSH validation from an admin workstation
+- QEMU Guest Agent installation and validation
+- Tailscale secure remote access model without public port forwarding
+- Markdown documentation, GitHub project structure, visual evidence handling, and privacy-aware redaction
 
-## Next Steps
+## Documentation index
 
-The next milestones are:
+| Document | Purpose |
+|---|---|
+| [`docs/00-project-roadmap.md`](docs/00-project-roadmap.md) | Current and planned implementation roadmap |
+| [`docs/01-hardware-inventory.md`](docs/01-hardware-inventory.md) | Devices, roles, and hardware details used in the lab |
+| [`docs/02-network-topology.md`](docs/02-network-topology.md) | Current physical and logical network design |
+| [`docs/03-proxmox-installation-and-networking.md`](docs/03-proxmox-installation-and-networking.md) | Proxmox deployment and management networking |
+| [`docs/04-fault-finding-laptop2-rj45.md`](docs/04-fault-finding-laptop2-rj45.md) | Defective RJ45 fault finding and workaround |
+| [`docs/05-router-replacement-and-subnet-migration.md`](docs/05-router-replacement-and-subnet-migration.md) | Router replacement and migration from old subnet to new subnet |
+| [`docs/06-ubuntu-server-baseline.md`](docs/06-ubuntu-server-baseline.md) | Ubuntu VM deployment, SSH validation, guest agent, baseline tools |
+| [`docs/07-secure-remote-access-tailscale.md`](docs/07-secure-remote-access-tailscale.md) | Secure remote access design using Tailscale |
+| [`docs/08-command-reference.md`](docs/08-command-reference.md) | Bash/Linux/Proxmox command reference with explanations |
+| [`docs/09-next-implementation-plan.md`](docs/09-next-implementation-plan.md) | Updated plan focused on job-market skill gaps |
+| [`docs/tickets/`](docs/tickets) | Incident-style troubleshooting notes |
 
-- Add DHCP/address reservations on the TP-Link Archer C6
-- Reserve the Proxmox management address
-- Reserve or document the Ubuntu Server VM address
-- Continue building the next SilverLab service layer
-- Add monitoring/SIEM practice using dedicated lab endpoints
-- Plan OPNsense deployment after a second USB-to-LAN adapter is available
+## Evidence approach
 
-## Planned Future Work
+Screenshots are used only where they prove functionality. Historical screenshots are not recreated if they were missed. Instead, current-state screenshots are used to demonstrate that the lab is working.
 
-Future phases of the lab will include:
+Current selected visual evidence is stored in [`assets/screenshots/`](assets/screenshots/). Sensitive information such as passwords, keys, tokens, public IPs, personal details, MAC addresses where appropriate, and Tailscale user/tailnet details has been excluded or redacted.
 
-- Additional Linux administration VMs
-- Windows Server VM
-- Active Directory, DNS, and DHCP practice
-- Windows client VM for domain-join testing
-- Monitoring and logging with Splunk and/or Wazuh
-- Backup and restore testing
-- OPNsense firewall and network segmentation
-- Secure file services using external storage
-- Documentation updates for each major milestone
+## Security approach
+
+- Proxmox is not exposed directly to the public internet.
+- Remote access is handled through Tailscale.
+- Public domain usage is planned only for safe portfolio/demo purposes later.
+- No passwords, private keys, secrets, tokens, or personal identifiers are intentionally documented.
+
+## Next milestone
+
+The next planned technical contribution is:
+
+```text
+Ubuntu Nginx internal web service + UFW firewall baseline
+```
+
+This will add a simple internal service to the Ubuntu VM, demonstrate Linux service deployment, firewall configuration, and web access validation from Laptop 1.
