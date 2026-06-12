@@ -96,3 +96,36 @@ Ubuntu Nginx internal web service + UFW firewall baseline
 ```
 
 This will add a simple internal service to the Ubuntu VM, demonstrate Linux service deployment, firewall configuration, and web access validation from Laptop 1.
+
+---
+
+## Latest Milestone: Ubuntu Nginx and UFW Baseline
+
+The Ubuntu Server VM now hosts a custom internal Nginx web page and is protected with UFW firewall rules.
+
+### What was implemented
+
+- Installed and validated Nginx on the Ubuntu Server VM
+- Created a custom internal SilverLab web page
+- Configured a dedicated Nginx site for `/var/www/silverlab`
+- Tested the Nginx configuration with `nginx -t`
+- Enabled UFW firewall
+- Allowed only required inbound services:
+  - SSH / OpenSSH
+  - HTTP / Nginx HTTP
+
+### Evidence added
+
+Screenshots were added for:
+
+- Nginx service running
+- Custom SilverLab web page reachable from Laptop 1
+- Nginx configuration test successful
+- UFW firewall active with SSH and HTTP allowed
+
+### Documentation
+
+Full write-up:
+
+[Ubuntu Nginx and UFW Baseline](docs/10-ubuntu-nginx-ufw-baseline.md)
+
