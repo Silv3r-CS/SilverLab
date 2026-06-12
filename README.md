@@ -129,3 +129,36 @@ Full write-up:
 
 [Ubuntu Nginx and UFW Baseline](docs/10-ubuntu-nginx-ufw-baseline.md)
 
+
+---
+
+## Next Milestone: Windows Server and Active Directory Baseline
+
+The next planned SilverLab milestone is to build a Windows Server VM and configure a basic Active Directory lab environment.
+
+### Planned implementation
+
+- Create a Windows Server VM in Proxmox
+- Assign suitable CPU, RAM, disk, and network settings
+- Connect the VM to the existing `vmbr0` lab network
+- Configure a stable IP address or DHCP reservation
+- Install and configure Active Directory Domain Services
+- Promote the server to a Domain Controller
+- Create a basic lab domain
+- Create organisational units, users, groups, and admin accounts
+- Document the setup with screenshots, commands, and configuration notes
+
+### Skills this milestone will demonstrate
+
+- Windows Server administration
+- Active Directory basics
+- User and group management
+- Identity and access management fundamentals
+- DNS/domain concepts
+- VM resource planning in Proxmox
+- IT support and junior infrastructure readiness
+
+### Why this is the next priority
+
+Active Directory, Windows Server, users, groups, permissions, and Microsoft infrastructure basics appear frequently in entry-level IT Support, Service Desk, Desktop Support, and Junior Infrastructure job adverts. This milestone will make SilverLab more directly relevant for job applications.
+
