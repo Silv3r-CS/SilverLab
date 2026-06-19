@@ -1,119 +1,134 @@
 # SilverLab
 
-SilverLab is a practical IT and cyber security homelab built to develop and demonstrate infrastructure, networking, Linux, Windows Server, security, documentation, and troubleshooting skills.
+SilverLab is a practical IT and cybersecurity homelab built to develop and demonstrate job-ready skills in virtualisation, networking, Windows Server, Active Directory, Linux administration, firewalling, VPN access, troubleshooting, documentation, and later security monitoring.
 
-The lab is built on repurposed laptop hardware using Proxmox VE, Ubuntu Server, Windows Server, Tailscale, and a dedicated lab router. The long-term goal is to evolve the environment into a segmented security lab with OPNsense, Active Directory, monitoring, backups, and documented incident-style troubleshooting.
+The lab uses repurposed laptop hardware and is documented as a small-business style environment: a Proxmox infrastructure host, a pfSense firewall, a protected lab LAN, Windows Server domain services, a domain-joined Windows client, and an internal Ubuntu/Nginx service.
 
 ## Current Status
 
 | Area | Status |
 |---|---|
-| Proxmox VE host | Built and operational on Laptop 2 |
-| Lab router | TP-Link Archer C6 configured on `192.168.1.0/24` |
-| Ubuntu Server VM | Built, baselined, reachable by SSH |
-| Ubuntu Nginx service | Custom internal web page deployed |
-| Ubuntu firewall | UFW enabled with SSH and HTTP allowed |
-| Tailscale | Secure remote access evidence documented |
-| Windows Server VM | Installed, renamed, network validated, RDP working |
-| Active Directory | Next milestone |
-| OPNsense segmentation | Planned later milestone |
-| Monitoring/SIEM | Planned later milestone |
-| Backup/restore testing | Planned later milestone |
+| Proxmox VE host | Built and operational on **SILVER-PVE01** |
+| Hardware baseline | Laptop 2 upgraded to approx. **16 GiB RAM** |
+| Firewall / gateway | **pfSense CE** deployed as **SILVER-FW01** |
+| Protected lab LAN | `192.168.1.0/24` behind pfSense |
+| DHCP / DNS forwarding | pfSense provides client DHCP/DNS and forwards `silverlab.local` to the DC |
+| Windows Server / AD | **SILVER-DC01** promoted as domain controller for `silverlab.local` |
+| Active Directory structure | Baseline OUs, users, groups, admin/service account structure created |
+| Windows client | **SILVER-CLIENT01** joined to `silverlab.local` |
+| Group Policy | Workstation baseline GPO applied and validated with logon banner |
+| Ubuntu/Nginx | Internal Ubuntu web server deployed and protected with UFW |
+| Remote access | pfSense OpenVPN validated from an external/mobile-hotspot client scenario |
+| Documentation | Core infrastructure evidence captured; screenshot redaction in progress |
 
-## Hardware Overview
+## Hardware and Role Overview
 
-| Device | Role |
-|---|---|
-| Laptop 1 | Admin workstation for Proxmox access, SSH, RDP, GitHub documentation, screenshots, and future client/security workloads |
-| Laptop 2 | Proxmox VE host with 8 GiB RAM |
-| TP-Link Archer C6 | Dedicated lab router and DHCP gateway |
-| USB-to-LAN adapter | Working network interface for Proxmox bridge after built-in RJ45 issues |
-| External SilverStore drive | Future backup, ISO/archive, and restore-testing storage |
+| Device | Documentation name | Role |
+|---|---|---|
+| Laptop 1 | **SILVER-KALI-CLIENT** | Kali workstation and endpoint/client VM host used for Windows client VMs, VPN client testing, remote-user scenarios, domain-client validation, and ethical security testing. |
+| Laptop 2 | **SILVER-PVE01** | Proxmox VE infrastructure host running the core server-side lab services. |
+| TP-Link Archer access point | **SilverLab Access Point** | Access point for the protected SilverLab LAN. |
+| Sky/home router | **Home Edge Router** | Home internet edge and pfSense WAN upstream. |
 
 ## Current Network Overview
 
-| Component | Address / Role |
-|---|---|
-| Lab gateway | `192.168.1.1` |
-| DHCP pool | `192.168.1.100 - 192.168.1.199` |
-| Proxmox host | `192.168.1.200` |
-| Ubuntu Server | `192.168.1.120` |
-| Windows Server | `192.168.1.154` |
-| Proxmox bridge | `vmbr0` using the working USB-to-LAN adapter |
+| Network area | Component | Address / role |
+|---|---|---|
+| Home / management side | Home edge router | `192.168.0.1` |
+| Home / management side | Proxmox management | Intended around `192.168.0.200` |
+| Home / management side | pfSense WAN | `192.168.0.2` |
+| Protected SilverLab LAN | pfSense LAN gateway | `192.168.1.1` |
+| Protected SilverLab LAN | SilverLab access point | `192.168.1.2` |
+| Protected SilverLab LAN | SILVER-DC01 | `192.168.1.10` |
+| Protected SilverLab LAN | SILVER-WEB01 | Around `192.168.1.120` |
+| Protected SilverLab LAN | DHCP pool | `192.168.1.160 - 192.168.1.199` |
 
-Private lab IP addresses are documented because they describe the internal lab design. Public IPs, passwords, tokens, private keys, MAC addresses, and personal details are excluded or redacted.
+Client DNS uses pfSense at `192.168.1.1`. pfSense forwards `silverlab.local` queries to the domain controller at `192.168.1.10`. This keeps normal clients independent from the domain controller for general internet DNS while preserving internal domain name resolution.
+
+```mermaid
+flowchart LR
+    Internet((Internet)) --> HomeRouter[Home Edge Router\n192.168.0.1]
+    HomeRouter --> PVE[SILVER-PVE01\nProxmox VE]
+    HomeRouter --> FW_WAN[SILVER-FW01 WAN\n192.168.0.2]
+
+    subgraph PVEHOST[SILVER-PVE01 / Laptop 2]
+        FW[SILVER-FW01\npfSense CE]
+        DC[SILVER-DC01\nWindows Server AD/DNS\n192.168.1.10]
+        WEB[SILVER-WEB01\nUbuntu/Nginx\n192.168.1.120]
+    end
+
+    FW --> LABLAN[Protected SilverLab LAN\n192.168.1.0/24]
+    LABLAN --> AP[SilverLab Access Point\n192.168.1.2]
+    LABLAN --> DC
+    LABLAN --> WEB
+    LABLAN --> CLIENT[SILVER-CLIENT01\nDomain client]
+
+    subgraph LAPTOP1[SILVER-KALI-CLIENT / Laptop 1]
+        KALI[Kali admin/security workstation]
+        CLIENT
+        REMOTE[WIN-REMOTE01\nFuture remote-client VM]
+    end
+
+    RemoteUser[External client / mobile hotspot] -. OpenVPN .-> FW
+```
+
+Private lab IP addresses are documented because they describe the internal lab design. Public IPs, passwords, tokens, private keys, MAC addresses, serial numbers, personal identifiers, and certificate/key material are excluded or redacted.
 
 ## Implemented Milestones
 
 ### 1. Proxmox and Network Foundation
 
-- Installed Proxmox VE on Laptop 2
-- Identified and worked around the defective built-in RJ45 path
-- Configured Proxmox networking through the working USB-to-LAN adapter
-- Documented `vmbr0`, storage layout, and baseline host configuration
+- Installed Proxmox VE on Laptop 2.
+- Configured the host as the core virtualisation platform.
+- Documented bridge networking, storage layout, VM creation, and troubleshooting evidence.
+- Updated the hardware baseline after the RAM upgrade to approx. 16 GiB.
 
 Documentation:
 
-- [Network Topology](docs/02-network-topology.md)
-- [Proxmox Installation and Networking](docs/03-proxmox-installation-and-networking.md)
-- [Fault Finding: Laptop 2 RJ45](docs/04-fault-finding-laptop2-rj45.md)
+- [Core Infrastructure Current Baseline](docs/core-infrastructure-current-baseline.md)
 
-### 2. Router Replacement and Subnet Migration
+### 2. Ubuntu Server, Nginx, and UFW Baseline
 
-- Replaced the earlier router setup with a TP-Link Archer C6
-- Migrated the lab from the old `192.168.0.x` range to `192.168.1.x`
-- Restored Proxmox access after the subnet change
-- Confirmed Ubuntu and Proxmox connectivity to the new gateway
+- Built the Ubuntu Server VM.
+- Configured SSH administration.
+- Installed and validated Nginx.
+- Created a custom internal SilverLab web page.
+- Enabled UFW with SSH and HTTP allowed.
 
-Documentation:
+### 3. pfSense Firewall, DHCP, DNS, and OpenVPN
 
-- [Router Replacement and Subnet Migration](docs/05-router-replacement-and-subnet-migration.md)
-
-### 3. Ubuntu Server Baseline
-
-- Built an Ubuntu Server VM
-- Configured SSH access
-- Installed baseline admin tools
-- Validated network settings, storage, memory, uptime, and QEMU Guest Agent
+- Deployed pfSense CE as the protected lab firewall and gateway.
+- Separated the home/management network from the protected SilverLab LAN.
+- Configured pfSense DHCP and DNS Resolver behaviour for clients.
+- Configured a domain override so `silverlab.local` resolves through the Windows Server domain controller.
+- Configured pfSense OpenVPN remote access.
+- Validated a Windows client connecting from an external/mobile-hotspot scenario.
 
 Documentation:
 
-- [Ubuntu Server Baseline](docs/06-ubuntu-server-baseline.md)
+- [pfSense and OpenVPN Remote Access](docs/pfsense-openvpn-remote-access.md)
 
-### 4. Secure Remote Access
+### 4. Windows Server and Active Directory
 
-- Used Tailscale for secure remote access
-- Avoided public Proxmox exposure and public port forwarding
-- Documented remote-access security rationale
-
-Documentation:
-
-- [Secure Remote Access with Tailscale](docs/07-secure-remote-access-tailscale.md)
-
-### 5. Ubuntu Nginx and UFW Baseline
-
-- Installed Nginx on Ubuntu Server
-- Created a custom internal SilverLab web page
-- Configured UFW with SSH and HTTP allowed
-- Validated Nginx service status, web access, and firewall rules
+- Built a Windows Server VM in Proxmox.
+- Renamed the server to **SILVER-DC01**.
+- Installed and promoted Active Directory Domain Services.
+- Created the `silverlab.local` domain.
+- Created baseline OUs for users, computers, admins, groups, and service accounts.
+- Created baseline user, admin, group, and service-account structures.
 
 Documentation:
 
-- [Ubuntu Nginx and UFW Baseline](docs/10-ubuntu-nginx-ufw-baseline.md)
+- [Active Directory, GPO, and Client Validation](docs/active-directory-gpo-client-validation.md)
 
-### 6. Windows Server VM Baseline
+### 5. Windows Client and Group Policy Validation
 
-- Created a Windows Server VM in Proxmox
-- Corrected the VM guest OS type to Microsoft Windows after identifying the first installation issue
-- Loaded the VirtIO SCSI storage driver during Windows Setup so the 60 GiB disk became visible
-- Installed Windows Server 2025 Standard Evaluation with Desktop Experience
-- Enabled Remote Desktop
-- Renamed the server to `SILVER-DC01`
-- Validated hostname, IP configuration, gateway, and network connectivity
-
-Documentation:
-
-- [Windows Server VM Baseline](docs/11-windows-server-baseline.md)
+- Ran the Windows client VM from **SILVER-KALI-CLIENT**.
+- Joined **SILVER-CLIENT01** to the `silverlab.local` domain.
+- Moved the computer object into `SilverLab -> Computers`.
+- Refreshed computer-scope Group Policy.
+- Confirmed the workstation baseline GPO applied successfully.
+- Validated the policy effect with a SilverLab logon banner.
 
 ## Screenshot Evidence
 
@@ -127,62 +142,43 @@ Screenshot index:
 
 - [Screenshot Evidence README](assets/screenshots/README.md)
 
-## Troubleshooting Tickets
+## Troubleshooting Evidence
 
-Troubleshooting notes are documented in a ticket-style format to show issue analysis, root cause, resolution, and verification.
+Troubleshooting notes are documented in a ticket-style format where appropriate to show issue analysis, root cause, resolution, and verification.
 
-| Ticket | Topic |
+Important issues documented or captured during the build include:
+
+| Area | Troubleshooting / learning outcome |
 |---|---|
-| [001](docs/tickets/001-laptop2-rj45-fault.md) | Laptop 2 RJ45 / network fault |
-| [002](docs/tickets/002-router-replacement.md) | Router replacement |
-| [003](docs/tickets/003-proxmox-unreachable-after-subnet-change.md) | Proxmox unreachable after subnet change |
-| [004](docs/tickets/004-ubuntu-dhcp-reservation.md) | Ubuntu DHCP reservation |
-| [005](docs/tickets/005-windows-server-virtio-driver-disk-detection.md) | Windows Server VirtIO disk driver during installation |
-
-## Command Reference
-
-A project command reference is maintained here:
-
-- [Command Reference](docs/08-command-reference.md)
+| Proxmox networking | Bridge and physical-adapter instability isolated and corrected. |
+| Physical cabling | Home-management wall socket/cable issue identified as a physical-layer fault. |
+| pfSense / LAN | Protected LAN restored after replacing intermittent USB-to-Ethernet adapter. |
+| Windows Server install | VirtIO driver issue identified and resolved during Windows setup. |
+| AD/GPO | Client OU placement validated through applied workstation policy. |
+| OpenVPN | External-client validation completed from mobile hotspot scenario. |
 
 ## Latest Milestone
 
 The latest completed milestone is:
 
 ```text
-Windows Server VM Baseline
+Core Infrastructure, Active Directory, Group Policy, and OpenVPN Validation
 ```
 
-This milestone adds a job-relevant Microsoft infrastructure foundation to SilverLab, including Windows Server installation, RDP administration, hostname/network validation, and Proxmox VirtIO driver troubleshooting.
+This milestone adds a job-relevant Microsoft and networking foundation to SilverLab, including Windows Server AD, OU design, client domain join, Group Policy validation, pfSense firewalling, DHCP/DNS design, and OpenVPN remote access testing.
 
-## Next Milestone: Active Directory Domain Services Baseline
+## Next Milestones
 
-The next milestone is to promote the Windows Server VM into the first SilverLab Domain Controller.
+Planned next stages:
 
-Planned implementation:
-
-- Assign a stable IP address or DHCP reservation to `SILVER-DC01`
-- Install Active Directory Domain Services
-- Promote `SILVER-DC01` to a Domain Controller
-- Create the initial lab domain
-- Configure DNS as part of the domain controller role
-- Create organisational units for users, admins, servers, and workstations
-- Create test user and admin accounts
-- Validate domain and DNS functionality
-- Document screenshots and configuration steps
-
-## Later Roadmap
-
-After Active Directory is stable, the planned direction is:
-
-1. Cross-platform validation between Windows Server and Ubuntu Server
-2. Windows client VM and domain join
-3. Group Policy basics
-4. OPNsense firewall and lab segmentation
-5. Backups and restore testing
-6. Monitoring/logging with Windows and Linux events
-7. Security/SOC-style workflows
-8. Automation with PowerShell, Bash, and later Ansible
+1. Final screenshot redaction and GitHub cleanup.
+2. File server and SMB share permissions using AD groups.
+3. Backup and restore evidence.
+4. Wazuh endpoint/security monitoring.
+5. Suricata IDS on pfSense in alert-only mode.
+6. ITSM/ticketing workflow evidence using Zendesk or Jira Service Management.
+7. MDM/endpoint-management milestone, ideally with Microsoft Intune if licensing allows.
+8. CV, Indeed, and recruiter-profile updates using SilverLab evidence.
 
 ## Security Principles
 
@@ -195,7 +191,9 @@ SilverLab documentation avoids exposing sensitive information. The repo should n
 - Public IP addresses
 - Email addresses
 - Personal addresses
-- MAC addresses unless redacted
+- MAC addresses unless intentionally redacted
 - Serial numbers
+- UUIDs or device IDs where not needed
 - Router/Wi-Fi passwords
 - Browser tabs containing personal information
+- VPN configuration files, certificates, or exported `.ovpn` profiles
