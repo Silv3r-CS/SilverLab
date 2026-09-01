@@ -1,208 +1,203 @@
 # SilverLab
 
-SilverLab is a practical IT and cybersecurity homelab built to develop and demonstrate job-ready skills in virtualisation, networking, Windows Server, Active Directory, Linux administration, firewalling, VPN access, troubleshooting, backup operations, documentation, and multi-user lab support.
+**IT Support | Modern Workplace | Networking | Junior Infrastructure Portfolio**
 
-The lab uses repurposed hardware and is documented as a small-business style environment: a Proxmox infrastructure host, a dedicated physical pfSense firewall, a managed VLAN network, Windows Server domain services, Windows client VMs, an internal Ubuntu/Nginx service, secure remote access, and scheduled backups.
+SilverLab is a multi-user technical lab I built to turn IT study into practical, reviewable evidence. It combines Windows 11 support, Windows Server and Active Directory, Microsoft Entra ID and Intune, Proxmox virtualisation, pfSense networking, secure remote access, role-based permissions, troubleshooting and technical documentation.
 
-## Current Status
+**Portfolio:** this repository documents independent hands-on lab work. It is not presented as production enterprise administration or paid IT support experience.
 
-| Area | Status |
+[LinkedIn](https://www.linkedin.com/in/robertbrownuk/) · [Modern Workplace evidence](docs/modern-workplace-identity-endpoint.md) · [Infrastructure baseline](docs/core-infrastructure-current-baseline.md) · [Screenshot evidence](assets/screenshots/README.md)
+
+---
+
+## Recruiter Quick View
+
+| Area | What I can demonstrate |
 |---|---|
-| Proxmox VE host | Built and operational on **SILVER-PVE01** |
-| Hardware baseline | Laptop 2 upgraded to approximately **16 GiB RAM** |
-| Firewall / gateway | **pfSense CE** migrated from a VM to a physical Fujitsu Futro S720 |
-| Managed network | TP-Link TL-SG105E configured for router-on-a-stick VLAN operation |
-| Protected lab LAN | VLAN 10 using `10.50.10.0/24`, with pfSense at `10.50.10.1` |
-| WAN transit | VLAN 99 separates the upstream WAN path from the protected LAN |
-| Windows Server / AD | **SILVER-DC01** provides the `silverlab.local` Active Directory environment |
-| Windows clients | Multiple Windows client VMs created and joined to the domain |
-| Remote student access | WireGuard access to the protected lab validated from a remote client |
-| Proxmox remote access | Tailscale used for protected Proxmox management access |
-| Multi-user administration | Individual student accounts and role-based Proxmox permissions configured and tested |
-| Backup | 1 TB USB backup storage added with a recurring Sunday backup job |
-| Documentation | Current topology and July 2026 progress update published |
+| **Windows & user support** | Windows 10/11 troubleshooting, sign-in/access issues, client configuration, domain join/disconnect, device enrolment and validation |
+| **Identity & endpoint management** | Active Directory, Entra ID, Entra Connect, users/groups, Intune enrolment, MDM scope, group-targeted assignments, MFA testing and Windows Autopilot practice |
+| **Networking & security** | TCP/IP, DNS, DHCP, NAT, VLANs, managed switching, pfSense firewalling/segmentation, WireGuard and Tailscale |
+| **Virtualisation & access control** | Proxmox VE, Proxmox Datacenter Manager, Windows/Linux VMs, role-based learner access and protected infrastructure |
+| **Support workflow** | Expected-versus-actual testing, fault isolation, Jira-based task/change documentation, GitHub evidence and structured handovers |
 
-## Hardware and Role Overview
+### Roles this portfolio is aligned with
 
-| Device | Documentation name | Role |
-|---|---|---|
-| Laptop 1 | **SILVER-KALI-CLIENT** | Kali admin/security workstation and endpoint/client VM host. |
-| Laptop 2 | **SILVER-PVE01** | Proxmox VE infrastructure host running the core server-side lab services. |
-| Fujitsu Futro S720 | **SILVER-FW01** | Physical pfSense firewall using a one-NIC router-on-a-stick design. |
-| TP-Link TL-SG105E | **SilverLab Managed Switch** | Provides tagged trunking and untagged access ports for VLAN 10 and VLAN 99. |
-| TP-Link Archer access point | **SilverLab Access Point** | Provides wired and wireless access to the protected SilverLab LAN. |
-| 1 TB USB drive | **Proxmox Backup Storage** | Local destination for scheduled VM and container backups. |
-| Home router | **Home Edge Router** | Internet edge and upstream connection for pfSense WAN. |
+- IT Support / Service Desk
+- MSP 1st Line Support
+- Desktop / EUC Support
+- Junior Modern Workplace Support
+- Junior Infrastructure / Network Support
 
-## Current Network Overview
+---
 
-| Network area | Component | Address / role |
-|---|---|---|
-| Protected SilverLab LAN | VLAN 10 | `10.50.10.0/24` |
-| Protected SilverLab LAN | pfSense gateway | `10.50.10.1` |
-| Protected SilverLab LAN | SilverLab access point | `10.50.10.2` |
-| Protected SilverLab LAN | Proxmox management | `10.50.10.200` |
-| WAN transit | VLAN 99 | Carries the upstream pfSense WAN path |
-| Emergency switch management | TL-SG105E management | `192.168.50.2` |
-| WireGuard tunnel | Remote-access network | `10.50.20.0/24` |
-| WireGuard tunnel | pfSense tunnel address | `10.50.20.1` |
-| Active Directory | Internal domain | `silverlab.local` |
+## Featured Practical Evidence
 
-The post-migration IP address for **SILVER-DC01** is intentionally not stated here until the updated static-address and DNS baseline has been fully revalidated and documented.
+### 1. Microsoft Modern Workplace: Entra ID, Intune and Windows 11
 
-### Managed Switch Port Layout
+Extended the lab from on-premises Active Directory into hybrid/cloud identity and endpoint management.
 
-| Port | Connection | VLAN behaviour |
-|---|---|---|
-| 1 | Fujitsu Futro S720 / pfSense | Tagged trunk carrying VLAN 10 and VLAN 99 |
-| 2 | Home edge router / WAN uplink | Untagged access port on VLAN 99 |
-| 3 | SilverLab access point | Untagged access port on VLAN 10 |
-| 4 | SILVER-PVE01 | Untagged access port on VLAN 10 |
-| 5 | Emergency switch management | Isolated management access |
+- Configured Entra Connect hybrid identity synchronisation.
+- Used Entra users and security groups for controlled assignments.
+- Enrolled Windows 11 clients into Intune and validated device/assignment behaviour.
+- Tested MDM scope, group-targeted policies, MFA and Windows Autopilot workflows.
+- Troubleshot an access-policy issue by checking group membership, correcting the targeted SID, synchronising policy and re-testing the endpoint.
+- Compared endpoint-based restrictions with identity-based approaches such as Conditional Access when selecting the appropriate control.
+
+**Evidence:** [Modern Workplace - Identity and Endpoint Management](docs/modern-workplace-identity-endpoint.md)
+
+### 2. Active Directory and Windows Client Support
+
+- Built and maintained a Windows Server AD DS/DNS environment.
+- Created users, groups and OUs and joined Windows clients to the domain.
+- Practised Group Policy, domain connectivity, DNS and sign-in troubleshooting.
+- Worked through local-administrator recovery and access-validation scenarios.
+
+**Evidence:** [Active Directory, GPO and Client Validation](docs/active-directory-gpo-client-validation.md)
+
+### 3. Physical pfSense Firewall and VLAN Segmentation
+
+- Migrated pfSense from a VM to a dedicated Fujitsu Futro S720.
+- Built a one-NIC router-on-a-stick design using a managed TP-Link switch.
+- Separated protected lab traffic from the upstream/home network with dedicated VLANs.
+- Used firewall rules, packet capture, routing checks and client troubleshooting to validate connectivity.
+
+**Evidence:** [Core Infrastructure Current Baseline](docs/core-infrastructure-current-baseline.md)
+
+### 4. Multi-User Proxmox and PDM Administration
+
+- Created individual learner accounts for shared practical work.
+- Troubleshot permissions for VM creation, storage, ISO access, bridges, snapshots and backups.
+- Added Proxmox Datacenter Manager and tested role separation.
+- Protected selected infrastructure from learner accounts and validated the result from a student test account.
+
+This part of the lab is deliberately multi-user so access-control decisions can be tested rather than only described.
+
+---
+
+## Selected Troubleshooting Examples
+
+### Intune / identity targeting
+
+**Symptom:** a Windows sign-in restriction did not initially produce the expected result.
+
+**Method:** checked group membership and identity targeting, corrected the SID used by the policy, synchronised the endpoint and re-tested after membership changes.
+
+**Result:** the intended user restriction was validated and the exercise demonstrated the difference between configuration, assignment, synchronisation and endpoint enforcement.
+
+### Remote-access connectivity
+
+**Symptom:** a remote learner could not reach the protected lab as intended.
+
+**Method:** checked WireGuard peer state, firewall rules, routing, packet capture and client-adapter configuration rather than changing multiple components at once.
+
+**Result:** remote access to the protected lab was established while keeping the upstream household network outside the learner access boundary.
+
+### Proxmox learner permissions
+
+**Symptom:** learner accounts could sign in but lacked required VM/storage/bridge functions, while protected systems also needed to remain unavailable.
+
+**Method:** tested permissions from learner accounts, adjusted role/pool boundaries and re-tested each capability.
+
+**Result:** learners could use the intended lab resources while selected infrastructure remained hidden/protected.
+
+---
+
+## Architecture at a Glance
 
 ```mermaid
 flowchart LR
-    Internet((Internet)) --> HomeRouter[Home Edge Router]
-    HomeRouter -->|Port 2: WAN transit VLAN 99| Switch[TP-Link TL-SG105E\nManaged Switch]
+    Internet((Internet)) --> FW[pfSense\nPhysical Firewall]
+    FW --> SW[Managed Switch\nVLAN Segmentation]
+    SW --> PVE[Proxmox VE]
+    SW --> CLIENTS[Windows Clients]
 
-    Switch -->|Port 1: tagged VLAN 99 + VLAN 10| FW[SILVER-FW01\nFujitsu Futro S720\npfSense CE]
-    FW -->|VLAN 10 gateway\n10.50.10.1| Switch
-
-    Switch -->|Port 4: VLAN 10| PVE[SILVER-PVE01\nProxmox VE\n10.50.10.200]
-    Switch -->|Port 3: VLAN 10| AP[SilverLab Access Point\n10.50.10.2]
-
-    subgraph PVEHOST[SILVER-PVE01 Services]
-        DC[SILVER-DC01\nWindows Server AD/DNS]
-        WEB[SILVER-WEB01\nUbuntu/Nginx]
-        CLIENTS[Windows Client VMs\nDomain and support testing]
+    subgraph LAB[SilverLab Services]
+        DC[Windows Server\nAD DS + DNS]
+        LINUX[Ubuntu / Linux Services]
+        PDM[Proxmox Datacenter Manager]
     end
 
     PVE --> DC
-    PVE --> WEB
-    PVE --> CLIENTS
-    USB[(1 TB USB\nScheduled Backup Storage)] --> PVE
-    AP --> LocalClients[Local SilverLab Clients]
+    PVE --> LINUX
+    PVE --> PDM
+    CLIENTS --> DC
 
-    RemoteStudent[Remote Student Device] -. WireGuard .-> FW
-    RemoteAdmin[Remote Proxmox User] -. Tailscale .-> PVE
+    DC --> CONNECT[Entra Connect]
+    CONNECT --> ENTRA[Microsoft Entra ID]
+    ENTRA --> INTUNE[Microsoft Intune]
+    INTUNE --> CLIENTS
+
+    REMOTE[Remote Learners / Admin] -. WireGuard / Tailscale .-> FW
 ```
 
-Private lab IP addresses are documented because they describe the internal lab design. Public IPs, passwords, tokens, private keys, MAC addresses, serial numbers, personal identifiers, VPN configuration exports, and certificate/key material are excluded or redacted.
+A more detailed network diagram and redacted screenshots are kept in the repository rather than placing every implementation detail on the landing page.
 
-## Implemented Milestones
+---
 
-### 1. Proxmox and Multi-User Lab Foundation
+## Current Lab Scope
 
-- Installed and configured Proxmox VE on Laptop 2.
-- Upgraded the host from 8 GB to approximately 16 GB RAM.
-- Created individual student accounts for shared practical learning.
-- Configured and troubleshot role-based permissions for VM creation, storage access, ISO use, virtual bridges, snapshots, and backups.
-- Diagnosed Proxmox login, storage selection, bridge selection, and snapshot permission issues.
+| Component | Purpose |
+|---|---|
+| **Proxmox VE** | Core virtualisation platform for server-side workloads |
+| **Proxmox Datacenter Manager** | Central visibility and learner-access testing |
+| **Windows Server** | Active Directory Domain Services and DNS |
+| **Windows 11 clients** | User, domain, Intune and support testing |
+| **Microsoft Entra ID / Entra Connect** | Hybrid identity and synchronisation practice |
+| **Microsoft Intune** | Endpoint enrolment, assignments, MDM scope and policy validation |
+| **pfSense** | Physical firewall, routing, segmentation and remote-access control |
+| **Managed switch** | Tagged/untagged VLAN configuration |
+| **WireGuard / Tailscale** | Controlled remote learner/admin access |
+| **Ubuntu / Linux** | Linux administration and internal service hosting |
+| **Jira + GitHub** | Work tracking, troubleshooting evidence and technical documentation |
 
-### 2. Physical pfSense and VLAN Migration
+---
 
-- Migrated pfSense from a virtual machine to a dedicated Fujitsu Futro S720.
-- Implemented a one-NIC router-on-a-stick design.
-- Configured VLAN 10 for the protected SilverLab LAN.
-- Configured VLAN 99 for the WAN transit path.
-- Configured managed switch trunk and access ports.
-- Moved Proxmox management into the protected VLAN 10 network.
-- Preserved separation between the home network and student-accessible lab resources.
+## Documentation and Evidence
 
-Documentation:
+Rather than listing technologies alone, the repository records **what changed, why it was changed, how it was validated and what happened when it failed**.
 
+Useful starting points:
+
+- [Modern Workplace - Identity and Endpoint Management](docs/modern-workplace-identity-endpoint.md)
 - [Core Infrastructure Current Baseline](docs/core-infrastructure-current-baseline.md)
-
-### 3. Windows Server, Active Directory, and Client Support
-
-- Maintained the `silverlab.local` Active Directory environment.
-- Created and joined additional Windows client VMs to the domain.
-- Practised computer-account creation, domain joining, DNS troubleshooting, local administrator recovery, and delegated administrative access.
-- Prepared **SILVER-CLIENT03** for remote Active Directory access.
-
-Documentation:
-
-- [Active Directory, GPO, and Client Validation](docs/active-directory-gpo-client-validation.md)
-
-### 4. Remote Access
-
-- Retained Tailscale for protected Proxmox management access.
-- Configured WireGuard on pfSense for remote access to VLAN 10.
-- Created individual WireGuard peer configurations.
-- Used firewall rules, status pages, packet capture, routing checks, and client-adapter troubleshooting to resolve connectivity issues.
-- Successfully established a remote student connection to SilverLab.
-
-Historical documentation:
-
-- [pfSense and OpenVPN Remote Access](docs/pfsense-openvpn-remote-access.md)
-
-### 5. Backup Operations
-
-- Added and mounted a 1 TB USB drive as Proxmox backup storage.
-- Created a recurring backup job scheduled for every Sunday.
-- Started the first full backup run for the selected workloads.
-- Added backup administration and permission troubleshooting to the multi-user learning environment.
-
-### 6. Troubleshooting and Project Practice
-
-- Diagnosed physical Ethernet cabling and USB network-adapter issues.
-- Investigated Windows DNS, domain connectivity, and local administrator problems.
-- Practised pfSense packet capture and firewall-rule troubleshooting.
-- Used Jira-style project planning for future infrastructure, SQL, cybersecurity, and AI-assisted documentation work.
-- Evaluated Proxmox Datacenter Manager for future centralised visibility of external nodes.
-
-## July 2026 Progress Update
-
-The latest documented milestone combines:
-
-```text
-Physical pfSense Migration, VLAN Segmentation, Multi-User Proxmox Access,
-WireGuard Remote Access, Windows Client Support, and Scheduled Backups
-```
-
-Full update:
-
+- [Active Directory, GPO and Client Validation](docs/active-directory-gpo-client-validation.md)
+- [Network Topology](docs/02-network-topology.md)
+- [Proxmox Installation and Networking](docs/03-proxmox-installation-and-networking.md)
+- [Secure Remote Access with Tailscale](docs/07-secure-remote-access-tailscale.md)
+- [Windows Server Baseline](docs/11-windows-server-baseline.md)
 - [SilverLab Progress Update - July 2026](docs/progress-update-2026-07.md)
+- [Curated Screenshot Evidence](assets/screenshots/README.md)
 
-## Portfolio Skills Demonstrated
+---
 
-- Proxmox VE administration and virtual machine lifecycle management
-- Role-based access control and multi-user platform support
-- pfSense firewall deployment and administration
-- VLAN design, tagged trunking, and managed-switch configuration
-- Network segmentation and protected management access
-- WireGuard and Tailscale remote-access implementation
-- Active Directory, DNS, domain join, and Windows client troubleshooting
-- Packet capture, firewall-rule testing, and structured fault finding
-- Scheduled backup configuration and backup-storage administration
-- Technical documentation, change tracking, and project planning
+## Working Method
 
-## Screenshot Evidence
+For practical changes I try to follow the same support pattern:
 
-Curated redacted screenshots are stored in:
+1. Define the expected result.
+2. Check the existing state before changing it.
+3. Make a controlled change.
+4. Validate from the affected user/device perspective.
+5. Record the actual result.
+6. Isolate the cause when expected and actual results differ.
+7. Re-test and document the final state.
 
-```text
-assets/screenshots/
-```
+The aim is to demonstrate troubleshooting and support judgement, not simply successful installations.
 
-Screenshot index:
+---
 
-- [Screenshot Evidence README](assets/screenshots/README.md)
+## Security and Privacy
 
-## Security Principles
+SilverLab is intentionally documented without publishing sensitive credentials or identifying infrastructure data. Public evidence excludes passwords, authentication tokens, private keys, public IP addresses, VPN configuration exports, personal identifiers, unredacted MAC addresses, serial numbers and certificate/key material.
 
-SilverLab documentation avoids exposing sensitive information. The repository should not contain:
+Private lab addresses may appear where they are useful for explaining network design.
 
-- Passwords
-- Private keys
-- API tokens
-- Tailscale authentication keys
-- Public IP addresses
-- Email addresses
-- Personal addresses
-- Unredacted MAC addresses
-- Serial numbers
-- UUIDs or device IDs where not required
-- Router or Wi-Fi passwords
-- Browser tabs containing personal information
-- VPN configuration files, certificates, or exported client profiles
+---
+
+## Background
+
+I am moving into a dedicated IT role after a career that included customer-facing technical environments, connected-fleet technology rollouts, stakeholder coordination and enterprise IT support-contract work. SilverLab is the practical evidence layer behind that transition: a place to build, break, troubleshoot, validate and document the technologies I am applying to support professionally.
+
+**Current focus:** IT Support, Modern Workplace, networking and junior infrastructure.
+
+[LinkedIn](https://www.linkedin.com/in/robertbrownuk/)
